@@ -8,6 +8,7 @@ template_dir = os.path.join(project_root, 'templates')
 
 app = Flask(__name__, template_folder=template_dir)
 socketio = SocketIO(app)
+command = "none";
 
 # Variable, um die empfangenen Daten zu speichern
 latest_data = {}
@@ -21,6 +22,8 @@ def index():
 @socketio.on('start_sniffer')
 def handle_start_sniffer():
     print("Sniffer gestartet")
+    global command
+    command = "start"
     # Hier kannst du den ESP32 anweisen, mit dem Sniffen zu beginnen
     # Beispiel: Sende ein Signal über HTTP oder seriell an den ESP32
 
@@ -28,7 +31,14 @@ def handle_start_sniffer():
 @socketio.on('stop_sniffer')
 def handle_stop_sniffer():
     print("Sniffer gestoppt")
+    global command
+    command = "stop"
     # Hier kannst du den ESP32 anweisen, das Sniffen zu stoppen
+
+# Route für die Befehle (GET)
+@app.route('/command', methods=['GET'])
+def send_command():
+    return command 
 
 # Route, um Daten vom ESP zu empfangen (POST)
 @app.route('/data', methods=['POST'])

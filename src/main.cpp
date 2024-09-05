@@ -17,6 +17,7 @@ const char* apPW = "12345678";
 unsigned long previousMillis = 0;
 const long interval = 5000;  // Alle 5 Sekunden
 
+bool snifferActive = false;
 
 
 void sendDataToServer(String data) {
@@ -28,10 +29,7 @@ void sendDataToServer(String data) {
     String payload = "{\"data\":\"" + data + "\"}";  // Beispiel-Daten im JSON-Format
     int httpResponseCode = http.POST(payload);
 
-    if (httpResponseCode > 0) {
-      String response = http.getString();  // Server-Antwort
-      Serial.println(response);
-    } else {
+    if (httpResponseCode <= 0) {
       Serial.print("Fehler beim Senden. HTTP Code: ");
       Serial.println(httpResponseCode);
     }
@@ -81,6 +79,34 @@ void setSTA(int status, const char* ssid, const char* pw) {
  }
 }
 
+void processCommand(String command) {
+  if (command == "start") {
+    snifferActive = true;
+    Serial.println("Sniffer gestartet");
+  } else if (command == "stop") {
+    snifferActive = false;
+    Serial.println("Sniffer gestoppt");
+  }
+}
+
+void checkCommand() {
+  if (WiFi.status() == WL_CONNECTED) {
+    HTTPClient http;
+    http.begin("http://192.168.178.60:5000/command");
+    http.addHeader("Content-Type", "application/json");
+
+    int httpResponseCode = http.GET();
+    if (httpResponseCode > 0) {
+      String command = http.getString();
+      processCommand(command);
+    } else {
+      Serial.println("Fehler beim Abrufen des Befehls");
+    }
+    http.end();
+  } else {
+    Serial.println("Keine WLAN-Verbindung");
+  }
+}
 
 void setup() {
     Serial.begin(115200);
@@ -98,14 +124,15 @@ void setup() {
 }
 
 void loop() {
-  // Datenaufzeichnung: Alle 5 Sekunden etwas ausgeben
-  unsigned long currentMillis = millis();
-  if(currentMillis - previousMillis >= interval) {
-    previousMillis = currentMillis;
+    checkCommand();
+    // Datenaufzeichnung: Alle 5 Sekunden etwas ausgeben
+    unsigned long currentMillis = millis();
+    if(currentMillis - previousMillis >= interval) {
+        previousMillis = currentMillis;
 
-    String data = "Testdaten";
-    sendDataToServer(data);
-    Serial.println(data);
-    delay(5000); 
-  }
+        if(snifferActive == true) {
+            String data = String(random(1000)) + "Testdaten";
+            sendDataToServer(data);
+        } 
+    }
 }

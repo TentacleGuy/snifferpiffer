@@ -1,14 +1,14 @@
 const socket = io();
 
-// Funktion zum Starten des Sniffers
-function startSniffer() {
-    socket.emit('start_sniffer');
-}
+       // Start Sniffer
+       function startSniffer() {
+        socket.emit('command', 'start');
+    }
 
-// Funktion zum Stoppen des Sniffers
-function stopSniffer() {
-    socket.emit('stop_sniffer');
-}
+    // Stop Sniffer
+    function stopSniffer() {
+        socket.emit('command', 'stop');
+    }
 
 // Empfangene Pakete in die Tabelle einfügen
 socket.on('new_packet', function(msg) {
