@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESP32 Sniffer</title>
+    <!-- Lade den Socket.IO-Client -->
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+</head>
+<body>
+    <h1>ESP32 Sniffer</h1>
+    <button onclick="startSniffer()">Sniffer starten</button>
+    <button onclick="stopSniffer()">Sniffer stoppen</button>
+    
+    <!-- Tabelle für empfangene Pakete -->
+    <table id="packetTable" border="1">
+        <tr>
+            <th>Paketdaten</th>
+        </tr>
+    </table>
+
+    <!-- JavaScript-Logik -->
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
