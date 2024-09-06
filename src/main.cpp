@@ -93,14 +93,16 @@ void checkCommand() {
   if (WiFi.status() == WL_CONNECTED) {
     HTTPClient http;
     http.begin("http://192.168.178.60:5000/command");
-    http.addHeader("Content-Type", "application/json");
-
+ 
     int httpResponseCode = http.GET();
     if (httpResponseCode > 0) {
       String command = http.getString();
       processCommand(command);
     } else {
       Serial.println("Fehler beim Abrufen des Befehls");
+      Serial.println("Command: " + http.getString());
+      Serial.println("HTTP Response Code: " + String(httpResponseCode));
+
     }
     http.end();
   } else {
@@ -124,12 +126,12 @@ void setup() {
 }
 
 void loop() {
-    checkCommand();
-    // Datenaufzeichnung: Alle 5 Sekunden etwas ausgeben
+
+
     unsigned long currentMillis = millis();
     if(currentMillis - previousMillis >= interval) {
         previousMillis = currentMillis;
-
+    checkCommand();
         if(snifferActive == true) {
             String data = String(random(1000)) + "Testdaten";
             sendDataToServer(data);
