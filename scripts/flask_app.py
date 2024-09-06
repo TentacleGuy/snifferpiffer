@@ -3,10 +3,15 @@ from flask import Flask, request, render_template, jsonify
 from flask_socketio import SocketIO, emit
 
 # Pfad zum Projektverzeichnis setzen (einen Ordner höher)
-project_root = os.path.abspath(os.path.join(os.getcwd(), '..'))
-template_dir = os.path.join(project_root, 'templates')
+#project_root = os.path.abspath(os.path.join(os.getcwd(), '..'))
+#template_dir = os.path.join(project_root, 'templates')
+#static_folder = os.path.join(project_root, 'static')
+project_root = os.path.abspath(os.path.dirname(__file__))
+template_dir = os.path.join(project_root, '../templates')
+static_folder = os.path.join(project_root, '../static') 
 
-app = Flask(__name__, template_folder=template_dir)
+#app = Flask(__name__, template_folder=template_dir)
+app = Flask(__name__, template_folder=template_dir, static_folder=static_folder)
 socketio = SocketIO(app)
 command = "none";
 

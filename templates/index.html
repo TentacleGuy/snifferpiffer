@@ -6,12 +6,43 @@
     <title>ESP32 Sniffer</title>
     <!-- Lade den Socket.IO-Client -->
     <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}"></style>
 </head>
 <body>
-    <h1>ESP32 Sniffer</h1>
-    <button onclick="startSniffer()">Sniffer starten</button>
-    <button onclick="stopSniffer()">Sniffer stoppen</button>
-    
+    <h1>SnifferPiffer</h1>
+    <div id="menu" class="columns">    
+        <button onclick="sendCommand('sniff')">Sniffer starten</button>
+        <button onclick="stopSniffer('piff')">Sniffer stoppen</button>
+    </div>
+    <div id="devices" class="rows">
+        <div id="espInfo" class="rows">
+            <div class="columns">
+                <input type="text" id="espName" readonly />
+                <input type="text" id="espIP" readonly />
+            </div>
+            <div class="rows">
+                <input type="text" id="espSSID" />
+                <input type="text" id="espPW"  />
+            </div>
+            <button onclick="sendCommand('newCredentials')">Speichern</button>
+            <button onclick="sendComman('restart')">Restart</button>
+        </div>
+        <div id="wlan" class="rows">
+            <div class="rows">
+                <select id="wlanSelect">
+                    <option value="none">WLAN Netzwerk auswählen</option>
+                </select>
+                <label for="wlanPW">WLAN-Passwort:</label>
+                <input type="text" id="wlanPW" />
+            </div>
+            <div class="columns">
+                <button onclick="sendCommand('connect')">Verbinden</button>
+                <button onclick="sendCommand('disconnect')">Trennen</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Tabelle für empfangene Pakete -->
     <table id="packetTable" border="1">
         <tr>
