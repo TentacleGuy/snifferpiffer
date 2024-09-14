@@ -3,7 +3,7 @@
 #include <HTTPClient.h>
  
 // Flask-Server
-const char* serverName = "http://192.168.178.60:5000/data"; 
+const char* serverName = "http://192.168.178.102:5000/data"; 
 
 // Konfiguration deines Heimnetzwerks (STA-Modus)
 const char* ssid = "FRITZ!Box 6591 Cable PE";
@@ -23,7 +23,7 @@ bool snifferActive = false;
 void sendDataToServer(String data) {
   if (WiFi.status() == WL_CONNECTED) {
     HTTPClient http;
-    http.begin("http://192.168.178.60:5000/data");  // IP des Flask-Servers
+    http.begin("http://192.168.178.102:5000/data");  // IP des Flask-Servers
     http.addHeader("Content-Type", "application/json");  // JSON-Daten
     
     String payload = "{\"data\":\"" + data + "\"}";  // Beispiel-Daten im JSON-Format
@@ -80,6 +80,7 @@ void setSTA(int status, const char* ssid, const char* pw) {
 }
 
 void processCommand(String command) {
+  Serial.println("Befehl empfangen: " + command);
   if (command == "start") {
     snifferActive = true;
     Serial.println("Sniffer gestartet");
@@ -92,7 +93,7 @@ void processCommand(String command) {
 void checkCommand() {
   if (WiFi.status() == WL_CONNECTED) {
     HTTPClient http;
-    http.begin("http://192.168.178.60:5000/command");
+    http.begin("http://192.168.178.102:5000/command");
  
     int httpResponseCode = http.GET();
     if (httpResponseCode > 0) {
@@ -126,15 +127,17 @@ void setup() {
 }
 
 void loop() {
-
+  if (WiFi.status() != WL_CONNECTED){
+        checkCommand();
+  }
 
     unsigned long currentMillis = millis();
     if(currentMillis - previousMillis >= interval) {
         previousMillis = currentMillis;
-    checkCommand();
-        if(snifferActive == true) {
+
+     
             String data = String(random(1000)) + "Testdaten";
             sendDataToServer(data);
-        } 
+        
     }
 }
